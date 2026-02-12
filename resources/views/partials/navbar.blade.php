@@ -31,6 +31,12 @@
     </nav>
 
     <div class="mt-auto">
+      @auth
+      <form action="/logout" method="POST">
+        @csrf
+        <button type="submit"  class="bg-blue-600 p-3 rounded-10 hover:bg-blue-950 text-white">Logout</button>
+      </form>
+      @endauth
       <a href="#" class="flex items-center p-3 hover:bg-gray-100 rounded-lg group transition">
         <i class="fa-regular fa-circle-user text-xl"></i>
         <span class="ml-4 hidden lg:block">Profile</span>
