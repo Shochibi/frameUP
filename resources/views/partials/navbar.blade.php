@@ -1,8 +1,10 @@
 <div class="flex">
-  <aside class="fixed left-0 top-0 h-screen lg:w-64 border-r border-gray-200 bg-white flex flex-col p-3 transition-all duration-300">
+  <aside
+    class="fixed left-0 top-0 h-screen lg:w-64 border-r border-gray-200 bg-white flex flex-col p-3 transition-all duration-300">
 
     <a href="{{ route('home') }}" class="mb-10 px-2 mt-4 flex items-center group">
-      <img src="{{ asset('images/logo2.png') }}" alt="logo FrameUP" class="w-20 h-20 object-contain transition-transform group-hover:scale-105">
+      <img src="{{ asset('images/logo2.png') }}" alt="logo FrameUP"
+        class="w-20 h-20 object-contain transition-transform group-hover:scale-105">
       <h1 class="text-xl font-bold hidden lg:block italic">FrameUP</h1>
     </a>
 
@@ -22,10 +24,10 @@
         <span class="ml-4 hidden lg:block">Jelajahi</span>
       </a>
 
-      <a href="#" class="flex items-center p-3 hover:bg-gray-100 rounded-lg group transition">
+      <button onclick="openModal()" class="w-full flex items-center p-3 hover:bg-gray-100 rounded-lg group transition">
         <i class="fa-solid fa-plus-square text-xl"></i>
         <span class="ml-4 hidden lg:block">Upload</span>
-      </a>
+      </button>
     </nav>
 
     <div class="mt-auto">
