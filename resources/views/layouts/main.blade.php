@@ -19,6 +19,7 @@
       @yield('content')
     </div>
   </main>
+  <script src="//unpkg.com/alpinejs" defer></script>
 
   <footer>
     <p>&copy; 2026 Belajar Laravel</p>
