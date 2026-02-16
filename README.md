@@ -13,6 +13,7 @@ di terminal <br>
 ``php artisan key:generate`` <br>
 ``php artisan migrate`` <br>
 ``php artisan storage:link`` <br>
+``php artisan db:seed`` <br>
 
 ## Cara nge run (*pake 2 terminal*)
 terminal pertama (jangan di close)<br>

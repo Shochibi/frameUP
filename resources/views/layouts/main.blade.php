@@ -14,8 +14,8 @@
   {{-- navbar --}}
   @include('partials.navbar')
 
-  <main class="ml-20 lg:ml-64 flex-1 bg-white min-h-screen">
-    <div class="max-w-2xl mx-auto py-8">
+  <main class="flex-1 min-h-screen ml-20 bg-white lg:ml-64">
+    <div class="max-w-2xl py-8 mx-auto">
       @yield('content')
     </div>
   </main>

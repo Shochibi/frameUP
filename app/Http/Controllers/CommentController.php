@@ -10,30 +10,30 @@ use App\Models\Comment;
 class CommentController extends Controller
 {
     public function store(Request $request, $postId)
-{
-    $request->validate([
-        'comment' => 'required'
-    ]);
+    {
+        $request->validate([
+            'comment' => 'required',
+            'parent_id' => 'nullable|exists:comments,id'
+        ]);
 
-    Comment::create([
-        'user_id' => auth::id(),
-        'post_id' => $postId,
-        'comment' => $request->comment,
-        'parent_id' => $request->parent_id
-    ]);
+        Comment::create([
+            'user_id' => Auth::id(),
+            'post_id' => $postId,
+            'comment' => $request->comment,
+            'parent_id' => $request->parent_id
+        ]);
 
-    return back();
-}
-
-public function destroy(Comment $comment)
-{
-    if ($comment->user_id !== Auth::id()) {
-        abort(403);
+        return back();
     }
 
-    $comment->delete();
+    public function destroy(Comment $comment)
+    {
+        if ($comment->user_id !== Auth::id() && $comment->post->user_id !== Auth::id()) {
+            abort(403);
+        }
 
-    return back();
-}
+        $comment->delete();
 
+        return back();
+    }
 }

@@ -1,110 +1,148 @@
-{{-- 1. Panggil Master Layout-nya --}}
+{{-- 1. Master Layout --}}
 @extends('layouts.main')
 
-{{-- 2. Isi bagian title --}}
 @section('title', 'Halaman Beranda')
 
-{{-- 3. Isi bagian content --}}
 @section('content')
-  <h1 class="text-center text-5xl font-bold mt-10 mb-10">Selamat Datang, {{ auth()->user()->username }}!</h1>
-  <h1 class="text-3xl font-bold text-red-500 text-center mb-5">Selamat Menikmati Postingan</h1>
+<div class="max-w-2xl py-10 mx-auto">
+  <h1 class="mb-2 text-4xl font-extrabold text-center text-gray-800">Selamat Datang, {{ auth()->user()->username }}!</h1>
+  <p class="mb-10 italic text-center text-gray-500">Selamat menikmati momen-momen terbaru</p>
+
   @foreach($posts as $post)
-    <div x-data="{ open:false, modal:false }" class="bg-white p-4 rounded-xl shadow mb-6 max-w-xl mx-auto relative">
+  <div x-data="{ 
+            open: false, 
+            modal: false, 
+            postLiked: {{ $post->isLikedBy(auth()->user()) ? 'true' : 'false' }}, 
+            likesCount: {{ $post->likes()->count() }} 
+           }"
+    class="relative max-w-xl mx-auto mb-10 overflow-hidden transition-all bg-white border border-gray-100 shadow-sm rounded-2xl hover:shadow-md">
 
-      {{-- Tombol Titik 3 --}}
-      <div class="absolute top-3 right-3">
-        <button @click="open = !open" class="text-gray-600 hover:text-black text-xl">
-          ⋮
-        </button>
-
-        {{-- Dropdown --}}
-        <div x-show="open" @click.away="open = false"
-          class="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-          {{-- SHARE --}}
-          <button onclick="navigator.share ? navigator.share({ url: window.location.href }) : alert('Copy URL manual ya')"
-            class="flex items-center gap-3 w-full px-4 py-2 hover:bg-gray-100 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-              class="w-5 h-5 text-current">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H9M17 7V15" />
-            </svg>
-
-            <span>Share</span>
-          </button>
-
-          {{-- DELETE --}}
-          @if($post->user_id === auth()->id())
-    <button @click="modal = true; open=false"
-        class="flex items-center gap-3 w-full px-4 py-2 hover:bg-gray-100 text-red-500">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke-width="1.5" stroke="currentColor"
-            class="w-5 h-5 text-current">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M6 7h12M9 7V4h6v3m-7 4v6m4-6v6m4-6v6M5 7h14l-1 12H6L5 7z" />
-        </svg>
-
-        <span>Delete</span>
-    </button>
-@endif
-
-
+    {{-- Header Post --}}
+    <div class="flex items-center justify-between p-4">
+      <div class="flex items-center gap-3">
+        {{-- Inisial User --}}
+        <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full shadow-sm bg-gradient-to-tr from-purple-500 to-blue-500">
+          {{ strtoupper(substr($post->user->username, 0, 1)) }}
         </div>
-      </div>
-
-      {{-- Konten Post --}}
-      <div class="flex items-center gap-2 mb-8 ">
-        <span class=" font-semibold text-sm text-gray-800">
+        <span class="font-bold text-gray-800 cursor-pointer hover:underline">
           {{ $post->user->username }}
         </span>
       </div>
 
-      @if($post->file_type == 'image')
-        <img src="{{ asset('storage/' . $post->file_path) }}" class="w-full max-h-96 rounded-lg object-contain">
-      @else
-        <video controls class="w-full max-h-96 rounded-lg object-contain">
-          <source src="{{ asset('storage/' . $post->file_path) }}">
-        </video>
-      @endif
+      {{-- Tombol Titik 3 --}}
+      <div class="relative">
+        <button @click="open = !open" class="p-2 text-gray-400 transition hover:text-black">
+          <i class="fa-solid fa-ellipsis"></i>
+        </button>
 
-      <h3 class="font-bold text-lg mt-5">{{ $post->title }}</h3>
+        {{-- Dropdown --}}
+        <div x-show="open" @click.away="open = false" x-transition
+          class="absolute right-0 z-20 w-40 py-1 mt-2 bg-white border border-gray-100 shadow-xl rounded-xl">
+          {{-- SHARE --}}
+          <button onclick="navigator.share ? navigator.share({ url: '{{ route('posts.show', $post->id) }}' }) : alert('URL disalin!')"
+            class="flex items-center w-full gap-3 px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-50">
+            <i class="fa-solid fa-share-nodes"></i>
+            <span>Bagikan</span>
+          </button>
 
-      <p class="text-gray-600 mb-10">{{ $post->description }}</p>
-
-        {{-- KOMEN --}}
-      <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-1 text-gray-600 hover:text-black mt-4">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M8.625 9h6.75M8.625 12h4.5m-7.5 8.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
-        </svg>
-
-        <span>{{ $post->comments->count() }}</span>
-      </a>
-
-      {{-- Modal Delete --}}
-      <div x-show="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-white p-6 rounded-xl w-80">
-          <h2 class="text-lg font-bold mb-3">Hapus Postingan?</h2>
-          <p class="text-gray-600 mb-4">Yakin mau hapus postingan ini?</p>
-
-          <div class="flex justify-end gap-3">
-            <button @click="modal=false" class="px-4 py-2 bg-gray-200 rounded-lg">
-              Batal
-            </button>
-
-            <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
-              @csrf
-              @method('DELETE')
-
-              <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                Hapus
-              </button>
-            </form>
-
-          </div>
+          {{-- DELETE --}}
+          @if($post->user_id === auth()->id())
+          <hr class="my-1 border-gray-100">
+          <button @click="modal = true; open = false"
+            class="flex items-center w-full gap-3 px-4 py-2 text-sm text-red-500 transition hover:bg-red-50">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Hapus Post</span>
+          </button>
+          @endif
         </div>
       </div>
-
     </div>
-  @endforeach
 
+    {{-- Media Post --}}
+    <div class="relative flex items-center justify-center overflow-hidden bg-black group aspect-square lg:aspect-video">
+      @if($post->file_type == 'image')
+      <img src="{{ asset('storage/' . $post->file_path) }}" class="object-contain w-full h-full">
+      @else
+      <video controls class="object-contain w-full h-full">
+        <source src="{{ asset('storage/' . $post->file_path) }}">
+      </video>
+      @endif
+    </div>
+
+    {{-- Interaksi (Like & Komen) --}}
+    <div class="p-4">
+      <div class="flex items-center gap-4 mb-3">
+        {{-- TOMBOL LIKE --}}
+        <button @click="let res = await toggleLike('{{ $post->id }}', 'post'); postLiked = (res.status === 'liked'); likesCount = res.count;"
+          class="text-2xl transition-all duration-300 active:scale-150"
+          :class="postLiked ? 'text-red-500' : 'text-gray-700 hover:text-red-500'">
+          <i :class="postLiked ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+        </button>
+
+        {{-- TOMBOL KOMEN (Link ke Detail) --}}
+        <a href="{{ route('posts.show', $post->id) }}" class="text-2xl text-gray-700 transition hover:text-blue-500">
+          <i class="fa-regular fa-comment"></i>
+        </a>
+      </div>
+
+      {{-- Info Like & Judul --}}
+      <div class="space-y-1">
+        <p class="text-sm font-bold text-gray-800" x-text="likesCount.toLocaleString() + ' suka'"></p>
+        <h3 class="text-sm font-bold">{{ $post->title }}</h3>
+        <p class="text-sm text-gray-600 line-clamp-2">{{ $post->description }}</p>
+
+        {{-- Link Lihat Semua Komentar --}}
+        <a href="{{ route('posts.show', $post->id) }}" class="block mt-2 text-xs text-gray-400 hover:underline">
+          Lihat semua {{ $post->comments->count() }} komentar
+        </a>
+        <span class="text-[10px] text-gray-400 uppercase tracking-tighter">{{ $post->created_at->diffForHumans() }}</span>
+      </div>
+    </div>
+
+    {{-- Modal Delete --}}
+    <div x-show="modal" x-transition.opacity class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div class="w-full max-w-xs overflow-hidden bg-white shadow-2xl rounded-2xl">
+        <div class="p-6 text-center">
+          <h2 class="text-lg font-bold text-gray-800">Hapus Postingan?</h2>
+          <p class="mt-2 text-sm text-gray-500">Tindakan ini tidak bisa dibatalkan.</p>
+        </div>
+        <div class="flex flex-col border-t border-gray-100">
+          <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
+            @csrf @method('DELETE')
+            <button class="w-full py-3 text-sm font-bold text-red-600 transition hover:bg-red-50">Hapus</button>
+          </form>
+          <button @click="modal=false" class="w-full py-3 text-sm text-gray-600 transition border-t border-gray-100 hover:bg-gray-50">Batal</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  @endforeach
+</div>
+
+{{-- Script AJAX Like yang sama dengan halaman detail --}}
+<script>
+  async function toggleLike(id, type) {
+    try {
+      let response = await fetch("{{ route('like.toggle') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({
+          id: id,
+          type: type
+        })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Gagal melakukan like:", error);
+      return {
+        status: 'error',
+        count: 0
+      };
+    }
+  }
+</script>
 @endsection
