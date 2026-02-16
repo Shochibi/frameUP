@@ -213,7 +213,7 @@
                     <div class="relative flex-1 group">
                         <input type="text" id="commentInput" name="comment" placeholder="Tulis komentar..."
                             class="w-full px-5 py-3 text-sm transition-all bg-gray-100 border-none outline-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500" 
-                            required>
+                            required autofocus>
                     </div>
                     <button class="flex items-center justify-center text-white transition-all bg-blue-600 w-11 h-11 rounded-2xl hover:bg-blue-700 active:scale-90">
                         <i class="text-sm fa-solid fa-paper-plane"></i>
