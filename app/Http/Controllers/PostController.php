@@ -41,6 +41,11 @@ public function destroy($id)
 {
     $post = Post::findOrFail($id);
 
+    // Cek apakah yang login adalah pemilik post
+    if ($post->user_id !== auth::id()) {
+        abort(403, 'Kamu tidak punya akses untuk menghapus post ini.');
+    }
+
     // hapus file dari storage
     if (Storage::disk('public')->exists($post->file_path)) {
         Storage::disk('public')->delete($post->file_path);
@@ -55,7 +60,35 @@ public function show(Post $post)
 {
     $post->load(['user', 'comments.user', 'comments.replies.user']);
 
-    return view('post.show', compact('post'));
+    return view('posts.show', compact('post'));
 }
+public function explore(Request $request)
+{
+    $search = $request->search;
+
+    $posts = Post::with('user')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+
+                // Cari di title
+                $q->where('title', 'like', "%{$search}%")
+
+                  // Cari di description
+                  ->orWhere('description', 'like', "%{$search}%")
+
+                  // Cari di username
+                  ->orWhereHas('user', function ($userQuery) use ($search) {
+                      $userQuery->where('username', 'like', "%{$search}%");
+                  });
+
+            });
+        })
+        ->latest()
+        ->paginate(15)
+        ->withQueryString();
+
+    return view('posts.explore', compact('posts', 'search'));
+}
+
 
 }

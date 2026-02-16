@@ -25,7 +25,9 @@ Route::middleware('auth')->group(function () {
 
 // Postingan
 Route::post('/post', [PostController::class, 'store'])->name('post.store');
-Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.delete');
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])
+    ->name('posts.destroy')
+    ->middleware('auth');
 Route::get('/posts/{post}', [PostController::class, 'show'])
     ->name('posts.show')
     ->middleware('auth');
@@ -36,4 +38,9 @@ Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
     ->middleware('auth');
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
     ->name('comments.destroy')
+    ->middleware('auth');
+
+//JELAJAHI 
+Route::get('/explore', [PostController::class, 'explore'])
+    ->name('posts.explore')
     ->middleware('auth');

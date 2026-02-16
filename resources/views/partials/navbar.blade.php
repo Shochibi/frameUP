@@ -19,7 +19,7 @@
         <span class="ml-4 hidden lg:block">Teman</span>
       </a>
 
-      <a href="#" class="flex items-center p-3 hover:bg-gray-100 rounded-lg group transition">
+      <a href="{{ route('posts.explore') }}" class="flex items-center p-3 hover:bg-gray-100 rounded-lg group transition">
         <i class="fa-solid fa-compass text-xl"></i>
         <span class="ml-4 hidden lg:block">Jelajahi</span>
       </a>

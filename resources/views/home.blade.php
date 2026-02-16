@@ -32,16 +32,20 @@
           </button>
 
           {{-- DELETE --}}
-          <button @click="modal = true; open=false"
-            class="flex items-center gap-3 w-full px-4 py-2 hover:bg-gray-100 text-red-500">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-              class="w-5 h-5 text-current">
-              <path stroke-linecap="round" stroke-linejoin="round"
+          @if($post->user_id === auth()->id())
+    <button @click="modal = true; open=false"
+        class="flex items-center gap-3 w-full px-4 py-2 hover:bg-gray-100 text-red-500">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor"
+            class="w-5 h-5 text-current">
+            <path stroke-linecap="round" stroke-linejoin="round"
                 d="M6 7h12M9 7V4h6v3m-7 4v6m4-6v6m4-6v6M5 7h14l-1 12H6L5 7z" />
-            </svg>
+        </svg>
 
-            <span>Delete</span>
-          </button>
+        <span>Delete</span>
+    </button>
+@endif
+
 
         </div>
       </div>
@@ -65,6 +69,7 @@
 
       <p class="text-gray-600 mb-10">{{ $post->description }}</p>
 
+        {{-- KOMEN --}}
       <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-1 text-gray-600 hover:text-black mt-4">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
           class="w-5 h-5">
@@ -86,7 +91,7 @@
               Batal
             </button>
 
-            <form action="{{ route('post.delete', $post->id) }}" method="POST">
+            <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
               @csrf
               @method('DELETE')
 
