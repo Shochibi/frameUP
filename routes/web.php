@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendsController;
 
 // Halaman Form Login
 Route::get('/login', [LoginController::class, 'index'])->name('login');
@@ -17,9 +18,6 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 //Pendaftaran
 Route::middleware('auth')->group(function () {
     Route::get('/home', [PostController::class, 'index'])->name('home');
-    Route::get('/friend', function () {
-        return view('friend');
-    })->name('friend');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
@@ -44,3 +42,18 @@ Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
 Route::get('/explore', [PostController::class, 'explore'])
     ->name('posts.explore')
     ->middleware('auth');
+
+// FRIEND
+Route::middleware('auth')->group(function () {
+
+      Route::get('/friend', [FriendsController::class, 'index'])->name('friend');
+    Route::post('/add-friend/{id}', [FriendsController::class, 'send']);
+    Route::post('/accept-friend/{id}', [FriendsController::class, 'accept']);
+    Route::post('/remove-friend/{id}', [FriendsController::class, 'remove']);
+
+    // CHAT
+    Route::get('/chat/{id}', [FriendsController::class, 'chat'])
+    ->middleware('auth')
+    ->name('chat');
+
+});

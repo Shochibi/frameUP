@@ -24,6 +24,33 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function friends()
+{
+    return $this->belongsToMany(self::class, 'friendships', 'user_id', 'friend_id')
+        ->wherePivot('status', 'accepted');
+}
+
+public function friendRequests()
+{
+    return $this->belongsToMany(self::class, 'friendships', 'friend_id', 'user_id')
+        ->wherePivot('status', 'pending');
+}
+public function friendshipStatus($otherUserId)
+{
+    $friendship = \DB::table('friendships')
+        ->where(function ($q) use ($otherUserId) {
+            $q->where('user_id', $this->id)
+              ->where('friend_id', $otherUserId);
+        })
+        ->orWhere(function ($q) use ($otherUserId) {
+            $q->where('user_id', $otherUserId)
+              ->where('friend_id', $this->id);
+        })
+        ->first();
+
+    return $friendship?->status;
+}
+
     public function comments()
 {
     return $this->hasMany(Comment::class);
