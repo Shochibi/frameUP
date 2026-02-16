@@ -21,13 +21,26 @@
             <h3>Daftar Teman</h3>
 
             @forelse($friends as $friend)
-                <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
-                    <span>{{ $friend->username }}</span>
-                    <a href="{{ route('chat', $friend->id) }}">
-                        <button>Kirim Pesan</button>
-                    </a>
-                </div>
-            @empty
+
+<div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+    <span>{{ $friend->username }}</span>
+
+    <div style="display:flex; gap:5px;">
+        <a href="{{ route('chat', $friend->id) }}">
+            <button>Kirim Pesan</button>
+        </a>
+
+        <form action="{{ url('/remove-friend/'.$friend->id) }}" method="POST">
+            @csrf
+            <button type="submit" style="background:#ff4d4d; color:white;">
+                Hapus
+            </button>
+        </form>
+    </div>
+</div>
+
+@empty
+
                 <p>Belum punya teman.</p>
             @endforelse
         </div>

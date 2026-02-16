@@ -13,15 +13,29 @@ class FriendsController extends Controller
     $user = Auth::user();
     $search = $request->search;
 
-    // Teman accepted
-    $friends = $user->friends()
-        ->when($search, function($q) use ($search){
-            $q->where('username', 'like', "%$search%");
+    // Ambil semua teman (dua arah)
+    $friends = User::whereIn('id', function($query) use ($user) {
+            $query->select('friend_id')
+                  ->from('friendships')
+                  ->where('user_id', $user->id)
+                  ->where('status', 'accepted');
+        })
+        ->orWhereIn('id', function($query) use ($user) {
+            $query->select('user_id')
+                  ->from('friendships')
+                  ->where('friend_id', $user->id)
+                  ->where('status', 'accepted');
         })
         ->get();
 
-    // Rekomendasi user
-    $recommended = User::where('id', '!=', $user->id)
+    // Ambil ID teman biar bisa di-exclude
+    $friendIds = $friends->pluck('id')->toArray();
+
+    // Tambahkan diri sendiri juga supaya tidak muncul
+    $friendIds[] = $user->id;
+
+    // Rekomendasi = user yang belum berteman
+    $recommended = User::whereNotIn('id', $friendIds)
         ->when($search, function($q) use ($search){
             $q->where('username', 'like', "%$search%");
         })
@@ -75,23 +89,41 @@ class FriendsController extends Controller
 
     // Hapus teman
     public function remove($id)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $user->friends()->detach($id);
+    \DB::table('friendships')
+        ->where(function ($q) use ($user, $id) {
+            $q->where('user_id', $user->id)
+              ->where('friend_id', $id);
+        })
+        ->orWhere(function ($q) use ($user, $id) {
+            $q->where('user_id', $id)
+              ->where('friend_id', $user->id);
+        })
+        ->delete();
 
-        return back()->with('success', 'Teman dihapus');
-    }
+    return back()->with('success', 'Teman dihapus');
+}
 
     // CHAT 
     public function chat($id)
 {
     $user = Auth::user();
 
-    // Pastikan sudah berteman
-    $isFriend = $user->friends()->where('friend_id', $id)->exists();
+    $isFriend = \DB::table('friendships')
+        ->where(function ($q) use ($user, $id) {
+            $q->where('user_id', $user->id)
+              ->where('friend_id', $id);
+        })
+        ->orWhere(function ($q) use ($user, $id) {
+            $q->where('user_id', $id)
+              ->where('friend_id', $user->id);
+        })
+        ->where('status', 'accepted')
+        ->exists();
 
-    if(!$isFriend){
+    if (!$isFriend) {
         abort(403);
     }
 
@@ -99,5 +131,6 @@ class FriendsController extends Controller
 
     return view('friends.chat', compact('friend'));
 }
+
 
 }
