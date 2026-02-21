@@ -4,102 +4,178 @@
 
 @section('content')
 
-<div style="max-width:900px; margin:auto;">
+    <div style="max-width:1100px; margin:auto; display:flex; border:2px solid #000; min-height:600px;">
 
-    <h2>Teman Saya</h2>
+        {{-- CONTENT --}}
+        <div style="flex:1; padding:30px;">
 
-    <form method="GET" style="margin-bottom:20px;">
-        <input type="text" name="search" value="{{ $search }}" placeholder="Cari teman..."
-               style="padding:8px; width:60%;">
-        <button type="submit">Cari</button>
-    </form>
+            {{-- SEARCH BAR --}}
+            <form method="GET" style="display:flex; gap:10px; margin-bottom:20px;">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Cari username 🔎"
+                    style="flex:1; padding:10px; border-radius:20px; border:2px solid #000;">
+                <button type="submit" style="padding:10px 20px; border:2px solid #000; background:white; cursor:pointer;">
+                    Cari
+                </button>
+            </form>
 
-    <div style="display:flex; gap:20px;">
 
-        {{-- KOLOM TEMAN --}}
-        <div style="flex:1; border:1px solid #eee; padding:15px; border-radius:8px;">
-            <h3>Daftar Teman</h3>
+            {{-- TAB HEADER --}}
+            <div style="display:flex; gap:40px; margin-bottom:20px; font-size:20px; font-weight:bold;">
 
-            @forelse($friends as $friend)
-
-<div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-    <span>{{ $friend->username }}</span>
-
-    <div style="display:flex; gap:5px;">
-        <a href="{{ route('chat', $friend->id) }}">
-            <button>Kirim Pesan</button>
-        </a>
-
-        <form action="{{ url('/remove-friend/'.$friend->id) }}" method="POST">
-            @csrf
-            <button type="submit" style="background:#ff4d4d; color:white;">
-                Hapus
-            </button>
-        </form>
-    </div>
-</div>
-
-@empty
-
-                <p>Belum punya teman.</p>
-            @endforelse
-        </div>
-
-        {{-- KOLOM REKOMENDASI --}}
-        <div style="flex:1; border:1px solid #eee; padding:15px; border-radius:8px;">
-            <h3>Rekomendasi</h3>
-
-            @forelse($recommended as $user)
-
-                <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>{{ $user->username }}</span>
-
-                    @php
-                        $status = auth()->user()->friendshipStatus($user->id);
-                    @endphp
-
-                    @if(!$status)
-                        <form action="{{ url('/add-friend/'.$user->id) }}" method="POST">
-                            @csrf
-                            <button type="submit">Tambah</button>
-                        </form>
-
-                    @elseif($status === 'pending')
-                        <button disabled>Menunggu</button>
-
-                    @elseif($status === 'accepted')
-                        <a href="{{ route('chat', $user->id) }}">
-                            <button>Chat</button>
-                        </a>
-                    @endif
+                <div id="tabFriends" onclick="switchTab('friends')"
+                    style="cursor:pointer; border-bottom:4px solid red; padding-bottom:5px; color:red;">
+                    Daftar Teman
                 </div>
 
-            @empty
-                <p>Tidak ada user.</p>
-            @endforelse
+                <div id="tabRecommend" onclick="switchTab('recommend')"
+                    style="cursor:pointer; border-bottom:4px solid transparent; padding-bottom:5px;">
+                    Rekomendasi
+                </div>
+
+                @auth
+                    <li style="position:relative; list-style:none; margin-left:auto;">
+
+                        <button onclick="openNotifModal()"
+                            style="background:none; border:none; cursor:pointer; font-size:22px;">
+                            <i class="fa-solid fa-bell" style="border:solid black 2px; padding:8px; font-size: 30px; color: #9400D3; background-color:rgba(15, 151, 255, 0.18)"></i>
+                        </button>
+
+                        @if(auth()->user()->friendRequests->count() > 0)
+                                    <span style="
+                                position:absolute;
+                                top:-5px;
+                                right:-8px;
+                                background:red;
+                                color:white;
+                                font-size:12px;
+                                padding:3px 6px;
+                                border-radius:50%;
+                            ">
+                                        {{ auth()->user()->friendRequests->count() }}
+                                    </span>
+                        @endif
+
+                    </li>
+                @endauth
+
+            </div>
+
+
+            {{-- CONTENT TAB --}}
+            <div>
+
+                {{-- DAFTAR TEMAN --}}
+                <div id="friendsContent">
+
+                    @forelse($friends as $friend)
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ccc;">
+                            <span style="font-size:18px;">
+                                {{ $friend->username }}
+                            </span>
+
+                            <div style="display:flex; gap:10px;">
+                                <a href="{{ route('chat', $friend->id) }}">
+                                    <button style="padding:6px 12px; cursor:pointer;">
+                                        Kirim Pesan
+                                    </button>
+                                </a>
+
+                                <form action="{{ url('/remove-friend/' . $friend->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        style="padding:6px 12px; background:#ff4d4d; color:white; border:none; cursor:pointer;">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @empty
+                        <p>Belum punya teman.</p>
+                    @endforelse
+
+                </div>
+
+
+                {{-- REKOMENDASI --}}
+                <div id="recommendContent" style="display:none;">
+
+                    @forelse($recommended as $user)
+
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ccc;">
+
+                            <span style="font-size:18px;">
+                                {{ $user->username }}
+                            </span>
+
+                            @php
+                                $status = auth()->user()->friendshipStatus($user->id);
+                            @endphp
+
+                            @if(!$status)
+                                <form action="{{ url('/add-friend/' . $user->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" style="padding:6px 12px; cursor:pointer;">
+                                        Tambah
+                                    </button>
+                                </form>
+
+                            @elseif($status === 'pending')
+                                <button disabled style="padding:6px 12px;">
+                                    Menunggu
+                                </button>
+
+                            @elseif($status === 'accepted')
+                                <a href="{{ route('chat', $user->id) }}">
+                                    <button style="padding:6px 12px;">
+                                        Chat
+                                    </button>
+                                </a>
+                            @endif
+
+                        </div>
+
+                    @empty
+                        <p>Tidak ada user.</p>
+                    @endforelse
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <hr style="margin:30px 0;">
+    <script>
+        function switchTab(tab) {
 
-    <h3>Permintaan Pertemanan</h3>
+            const friends = document.getElementById('friendsContent');
+            const recommend = document.getElementById('recommendContent');
 
-    @forelse(auth()->user()->friendRequests as $request)
+            const tabFriends = document.getElementById('tabFriends');
+            const tabRecommend = document.getElementById('tabRecommend');
 
-        <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
-            <span>{{ $request->username }}</span>
+            if (tab === 'friends') {
+                friends.style.display = 'block';
+                recommend.style.display = 'none';
 
-            <form action="{{ url('/accept-friend/'.$request->id) }}" method="POST">
-                @csrf
-                <button type="submit">Terima</button>
-            </form>
-        </div>
+                tabFriends.style.borderBottom = '4px solid red';
+                tabFriends.style.color = 'red';
 
-    @empty
-        <p>Tidak ada request masuk.</p>
-    @endforelse
+                tabRecommend.style.borderBottom = '4px solid transparent';
+                tabRecommend.style.color = 'black';
+            } else {
+                friends.style.display = 'none';
+                recommend.style.display = 'block';
 
-</div>
+                tabRecommend.style.borderBottom = '4px solid red';
+                tabRecommend.style.color = 'red';
 
+                tabFriends.style.borderBottom = '4px solid transparent';
+                tabFriends.style.color = 'black';
+            }
+        }
+    </script>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FriendsController extends Controller
 {
@@ -76,16 +77,27 @@ class FriendsController extends Controller
 }
 
     // Terima request
-    public function accept($id)
-    {
-        $user = Auth::user();
-
-        $user->friendRequests()->updateExistingPivot($id, [
+public function accept($senderId)
+{
+    DB::table('friendships')
+        ->where('user_id', $senderId)
+        ->where('friend_id', auth()->id())
+        ->update([
             'status' => 'accepted'
         ]);
 
-        return back()->with('success', 'Request diterima');
-    }
+    return back();
+}
+
+    public function reject($senderId)
+{
+    DB::table('friendships')
+        ->where('user_id', $senderId)
+        ->where('friend_id', auth()->id())
+        ->delete();
+
+    return back();
+}
 
     // Hapus teman
     public function remove($id)

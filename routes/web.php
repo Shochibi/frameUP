@@ -67,8 +67,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/friend', [FriendsController::class, 'index'])->name('friend');
     Route::post('/add-friend/{id}', [FriendsController::class, 'send']);
-    Route::post('/accept-friend/{id}', [FriendsController::class, 'accept']);
+    Route::post('/friend/accept/{id}', [FriendsController::class, 'accept'])->name('friend.accept');
     Route::post('/remove-friend/{id}', [FriendsController::class, 'remove']);
+    Route::post('/friend/reject/{id}', [FriendsController::class, 'reject'])->name('friend.reject');
 
     // CHAT
     Route::get('/chat/{id}', [FriendsController::class, 'chat'])
