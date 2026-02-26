@@ -76,7 +76,7 @@
                             </span>
 
                             <div style="display:flex; gap:10px;">
-                                <a href="{{ route('.friends.chat', $friend->id) }}">
+                                <a href="{{ route('friends.send', $friend->id) }}">
                                     <button style="padding:6px 12px; cursor:pointer;">
                                         Kirim Pesan
                                     </button>
