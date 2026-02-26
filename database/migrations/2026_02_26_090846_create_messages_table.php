@@ -11,24 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
         $table->id();
 
-        $table->foreignUuid('user_id')
-            ->constrained()
+        $table->foreignUuid('sender_id')
+            ->constrained('users')
             ->cascadeOnDelete();
 
-        $table->foreignId('post_id')
-            ->constrained()
+        $table->foreignUuid('receiver_id')
+            ->constrained('users')
             ->cascadeOnDelete();
 
-        $table->text('comment');
-
-        $table->foreignId('parent_id')
-            ->nullable()
-            ->constrained('comments')
-            ->cascadeOnDelete();
-
+        $table->text('message');
         $table->timestamps();
     });
     }
@@ -38,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('messages');
     }
 };

@@ -37,22 +37,23 @@
 
                         <button onclick="openNotifModal()"
                             style="background:none; border:none; cursor:pointer; font-size:22px;">
-                            <i class="fa-solid fa-bell" style="border:solid black 2px; padding:8px; font-size: 30px; color: #9400D3; background-color:rgba(15, 151, 255, 0.18)"></i>
+                            <i class="fa-solid fa-bell"
+                                style="border:solid black 2px; padding:8px; font-size: 30px; color: #9400D3; background-color:rgba(15, 151, 255, 0.18)"></i>
                         </button>
 
                         @if(auth()->user()->friendRequests->count() > 0)
-                                    <span style="
-                                position:absolute;
-                                top:-5px;
-                                right:-8px;
-                                background:red;
-                                color:white;
-                                font-size:12px;
-                                padding:3px 6px;
-                                border-radius:50%;
-                            ">
-                                        {{ auth()->user()->friendRequests->count() }}
-                                    </span>
+                            <span style="
+                                            position:absolute;
+                                            top:-5px;
+                                            right:-8px;
+                                            background:red;
+                                            color:white;
+                                            font-size:12px;
+                                            padding:3px 6px;
+                                            border-radius:50%;
+                                        ">
+                                {{ auth()->user()->friendRequests->count() }}
+                            </span>
                         @endif
 
                     </li>
@@ -75,7 +76,7 @@
                             </span>
 
                             <div style="display:flex; gap:10px;">
-                                <a href="{{ route('chat', $friend->id) }}">
+                                <a href="{{ route('.friends.chat', $friend->id) }}">
                                     <button style="padding:6px 12px; cursor:pointer;">
                                         Kirim Pesan
                                     </button>

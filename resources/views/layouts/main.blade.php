@@ -9,6 +9,32 @@
   @vite('resources/css/app.css')
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+<style>
+  .chat-box {
+    height:400px;
+    overflow-y:scroll;
+    display:flex;
+    flex-direction:column;
+}
+
+.chat-message {
+    max-width:60%;
+    padding:10px;
+    margin:5px;
+    border-radius:15px;
+}
+
+.me {
+    background:#0095f6;
+    color:white;
+    align-self:flex-end;
+}
+
+.friend {
+    background:#eee;
+    align-self:flex-start;
+}
+</style>
 @include('upload')
 
 <body>

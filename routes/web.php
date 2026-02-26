@@ -8,104 +8,106 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\ChatController;
 
-// Redirect ke Login jika buka root
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+/*
+|--------------------------------------------------------------------------
+| Redirect Root
+|--------------------------------------------------------------------------
+*/
 
-// Guest Routes (Hanya untuk yang belum login)
+Route::get('/', fn() => redirect()->route('login'));
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate']);
+
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 });
 
-// Auth Routes (Harus Login)
+/*
+|--------------------------------------------------------------------------
+| Auth Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
 
-    // Navigasi Utama
+    // HOME
     Route::get('/home', [PostController::class, 'index'])->name('home');
-    Route::get('/friend', function () {
-        return view('friend');
-    })->name('friend');
 
-    // Profile
+    // PROFILE
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::post('/profile/update-profile', [ProfileController::class, 'updateProfile'])->name('profile.updateProfile');
     Route::post('/profile/verify-password', [ProfileController::class, 'verifyPassword'])->name('profile.verifyPassword');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
-    // Logout
+    // LOGOUT
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-});
-// Postingan
-Route::post('/post', [PostController::class, 'store'])->name('post.store');
-Route::delete('/posts/{post}', [PostController::class, 'destroy'])
-    ->name('posts.destroy')
-    ->middleware('auth');
-Route::get('/posts/{post}', [PostController::class, 'show'])
-    ->name('posts.show')
-    ->middleware('auth');
 
-// COMMENT
-Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
-    ->name('comments.store')
-    ->middleware('auth');
-Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
-    ->name('comments.destroy')
-    ->middleware('auth');
-
-//JELAJAHI 
-Route::get('/explore', [PostController::class, 'explore'])
-    ->name('posts.explore')
-    ->middleware('auth');
-
-// FRIEND
-Route::middleware('auth')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | FRIEND SYSTEM
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('/friend', [FriendsController::class, 'index'])->name('friend');
     Route::post('/add-friend/{id}', [FriendsController::class, 'send']);
     Route::post('/friend/accept/{id}', [FriendsController::class, 'accept'])->name('friend.accept');
-    Route::post('/remove-friend/{id}', [FriendsController::class, 'remove']);
     Route::post('/friend/reject/{id}', [FriendsController::class, 'reject'])->name('friend.reject');
+    Route::post('/remove-friend/{id}', [FriendsController::class, 'remove']);
 
-    // CHAT
-    Route::get('/chat/{id}', [FriendsController::class, 'chat'])
-        ->middleware('auth')
-        ->name('chat');
+    /*
+    |--------------------------------------------------------------------------
+    | CHAT SYSTEM
+    |--------------------------------------------------------------------------
+    */
 
-    // Postingan
+    Route::get('/chat', [ChatController::class, 'index'])->name('friends.index');
+    Route::get('/chat/{id}', [ChatController::class, 'show'])->name('friends.show');
+    Route::post('/chat/{id}', [ChatController::class, 'send'])->name('friends.send');
+    Route::put('/chat/{id}', [ChatController::class, 'update'])->name('friends.update');
+    Route::delete('/chat/{id}', [ChatController::class, 'destroy'])->name('friends.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | POST SYSTEM
+    |--------------------------------------------------------------------------
+    */
+
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
-    Route::delete('/posts/{post}', [PostController::class, 'destroy'])
-        ->name('posts.destroy')
-        ->middleware('auth');
-    Route::get('/posts/{post}', [PostController::class, 'show'])
-        ->name('posts.show')
-        ->middleware('auth');
-
-    // COMMENT
-    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
-        ->name('comments.store')
-        ->middleware('auth');
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
-        ->name('comments.destroy')
-        ->middleware('auth');
-
-    //JELAJAHI 
-    Route::get('/explore', [PostController::class, 'explore'])
-        ->name('posts.explore')
-        ->middleware('auth');
-    // CRUD POSTINGAN
-    Route::post('/post', [PostController::class, 'store'])->name('post.store');
-    Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.delete');
+    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
-    // CRUD KOMENTAR
-    // Gunakan POST untuk simpan, DELETE untuk hapus
+    /*
+    |--------------------------------------------------------------------------
+    | COMMENT SYSTEM
+    |--------------------------------------------------------------------------
+    */
+
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
-    Route::post('/like/toggle', [LikeController::class, 'toggle'])->name('like.toggle')->middleware('auth');
+    /*
+    |--------------------------------------------------------------------------
+    | LIKE SYSTEM
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/like/toggle', [LikeController::class, 'toggle'])->name('like.toggle');
+
+    /*
+    |--------------------------------------------------------------------------
+    | EXPLORE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/explore', [PostController::class, 'explore'])->name('posts.explore');
 });
