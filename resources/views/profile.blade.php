@@ -54,22 +54,22 @@
             </div>
 
             {{-- Action Buttons --}}
-            <div class="grid grid-cols-2 gap-4">
-                <button type="button" onclick="openEditModal()" class="flex items-center justify-center px-6 py-3 font-bold text-white transition-all bg-blue-600 shadow-lg rounded-xl hover:bg-blue-700 active:scale-95 shadow-blue-200">
-                    <i class="mr-2 fa-solid fa-user-pen"></i> Edit Profil
+            <div class="grid grid-cols-1 gap-4">
+                <button type="button" onclick="openEditModal()" class="flex items-center justify-center py-3 font-bold text-white transition-all bg-blue-600 shadow-lg rounded-xl hover:bg-blue-700 active:scale-95 shadow-blue-200">
+                    <i class="mr-2 fa-solid fa-user-pen"></i> Edit Profile
                 </button>
-                <button type="button" onclick="openPasswordModal()" class="flex items-center justify-center px-6 py-3 font-bold text-white transition-all bg-purple-600 shadow-lg rounded-xl hover:bg-purple-700 active:scale-95 shadow-purple-200">
+                {{-- <button type="button" onclick="openPasswordModal()" class="flex items-center justify-center px-6 py-3 font-bold text-white transition-all bg-purple-600 shadow-lg rounded-xl hover:bg-purple-700 active:scale-95 shadow-purple-200">
                     <i class="mr-2 fa-solid fa-shield-halved"></i> Ganti Password
-                </button>
+                </button> --}}
             </div>
 
             {{-- Logout --}}
-            <form action="{{ route('logout') }}" method="POST" class="mt-4">
+            {{-- <form action="{{ route('logout') }}" method="POST" class="mt-4">
                 @csrf
                 <button type="submit" class="w-full px-6 py-3 font-bold text-red-600 transition-all border-2 border-red-100 rounded-xl hover:bg-red-50 active:scale-95">
                     <i class="mr-2 fa-solid fa-power-off"></i> Logout
                 </button>
-            </form>
+            </form> --}}
         </div>
     </div>
 </div>

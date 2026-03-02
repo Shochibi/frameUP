@@ -111,3 +111,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/explore', [PostController::class, 'explore'])->name('posts.explore');
 });
+
+    /*
+    |--------------------------------------------------------------------------
+    | SETTINGS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth')->group(function () {
+    Route::get('/settings', function () {
+        return view('settings.index');
+    })->name('settings');
+});

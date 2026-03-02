@@ -35,7 +35,7 @@
         <i class="text-xl fa-regular fa-circle-user"></i>
         <span class="hidden ml-4 lg:block">Profile</span>
       </a>
-      <a href="#" class="flex items-center p-3 transition rounded-lg hover:bg-gray-100 group">
+      <a href="{{ route('settings') }}" class="flex items-center p-3 transition rounded-lg hover:bg-gray-100 group">
         <i class="text-xl fa-solid fa-gear"></i>
         <span class="hidden ml-4 lg:block">Setting</span>
       </a>
