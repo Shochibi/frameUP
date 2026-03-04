@@ -100,4 +100,13 @@ class ProfileController extends Controller
       throw $e;
     }
   }
+
+  public function show($username)
+{
+    $user = User::where('username', $username)
+                ->with('posts')
+                ->firstOrFail();
+
+    return view('profile.show', compact('user'));
+}
 }

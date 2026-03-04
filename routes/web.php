@@ -85,6 +85,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+    // KLIK USERNAME DIPOSTINGAN UNTUK MELIHAT PROFILE 
+    Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile.show');
 
     /*
     |--------------------------------------------------------------------------

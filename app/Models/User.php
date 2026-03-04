@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Post;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -30,6 +31,10 @@ class User extends Authenticatable
         ->wherePivot('status', 'accepted');
 }
 
+    public function posts()
+{
+    return $this->hasMany(Post::class);
+}
 public function friendRequests()
 {
     return $this->belongsToMany(self::class, 'friendships', 'friend_id', 'user_id')

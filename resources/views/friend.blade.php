@@ -92,7 +92,7 @@
                             </div>
                         </div>
                     @empty
-                        <p style="margin-left: 250px; margin-top: 200px;">Belum punya teman.</p>
+                        <p style="margin-left: 250px; margin-top: 200px;">Tidak ada Teman.</p>
                     @endforelse
 
                 </div>
